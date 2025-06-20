@@ -104,7 +104,7 @@ async function initialize() {
     try {
         // 1. HID 장치 찾기 및 열기
         const devices = HID.devices();
-        console.log(devices);
+        console.log("Hid devices:", devices);
         const rpiKeyboardDevice = devices.find(dev =>
             dev.vendorId === RPI_HID_VENDOR_ID &&
             dev.productId === RPI_HID_PRODUCT_ID

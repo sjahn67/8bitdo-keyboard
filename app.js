@@ -2,8 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
-const hid_key_code = require("./hid_key_code");
-const key_names = Object.keys(hid_key_code);
+const hid = require("./hid_key_code");
+const hid_gen_key_names = Object.keys(hid.GEN_KEY);
+const hid_mo_key_names = Object.keys(hid.MO_KEY);
 const port = 3000;
 
 // 임시 데이터 저장소 (실제 앱에서는 데이터베이스 사용)

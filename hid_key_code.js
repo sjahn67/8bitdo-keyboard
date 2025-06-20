@@ -1,7 +1,7 @@
 // keyboard_hid_codes.js
-
+let m = module.exports = {};
 // 일반 문자 키 (0x04 ~ 0x2C)
-const HID_KEY = {
+m.GEN_KEY = Object.freeze({
     // Letters
     A: 0x04,
     B: 0x05,
@@ -114,6 +114,9 @@ const HID_KEY = {
     POWER: 0x66, // Power
     KP_EQUAL: 0x67, // Keypad =
 
+});
+
+m.MO_KEY = Object.freeze({
     // Modifier Keys (0xE0 ~ 0xE7) - 이들은 단독으로 사용되지 않고 다른 키와 조합됩니다.
     LEFT_CONTROL: 0xE0,
     LEFT_SHIFT: 0xE1,
@@ -123,9 +126,8 @@ const HID_KEY = {
     RIGHT_SHIFT: 0xE5,
     RIGHT_ALT: 0xE6,
     RIGHT_GUI: 0xE7,
-};
+})
 
-module.exports = HID_KEY;
 
 // 사용 예시
 /*
