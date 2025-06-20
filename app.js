@@ -7,13 +7,11 @@ const hid_gen_key_names = Object.keys(hid.GEN_KEY);
 const hid_mo_key_names = Object.keys(hid.MO_KEY);
 hid_mo_key_names.splice(0, 0, "None");
 const port = 3000;
+const database = require("./database");
 
 // 임시 데이터 저장소 (실제 앱에서는 데이터베이스 사용)
-let buttonValues = {
-    button0: 0,
-    button1: 0,
-    button2: 0
-};
+global.ProgramConfig = database.getProgramConfig();
+let buttonValues = ProgramConfig.values;
 
 // 드롭다운에 사용할 값 목록을 함수로 정의
 // 이 함수는 문자열 배열을 반환합니다.
@@ -63,6 +61,7 @@ app.post('/api/update-value', (req, res) => {
     if (buttonId in buttonValues) {
         buttonValues[buttonId] = newValue; // 숫자로 변환
         console.log(`Updated ${buttonId} to: ${buttonValues[buttonId]}`);
+        database.saveProgramConfig(ProgramConfig);
         res.json({ success: true, newValues: buttonValues });
     } else {
         res.status(400).json({ success: false, message: 'Invalid button ID' });
