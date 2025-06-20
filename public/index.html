@@ -4,26 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>원형 버튼 컨트롤</title>
+    <title>Key define</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
         <div class="button-group">
+
+            <div class="button-container">
+                <div class="current-value" id="currentValue0">Option key: None</div>
+                <div class="controls">
+                    <select class="value-dropdownmodi" id="dropdown0">
+                    </select>
+                    <button class="confirm-button" data-button-id="button0">Confirm</button>
+                </div>
+            </div>
+
             <div class="button-container">
                 <button class="circle-button" id="button1" data-button-key="key1"></button>
-                <div class="current-value" id="currentValue1">현재 값: 0</div>
+                <div class="current-value" id="currentValue1">Current Key: 0</div>
                 <div class="controls">
                     <select class="value-dropdown" id="dropdown1">
                     </select>
-                    <button class="confirm-button" data-button-id="button1">확인</button>
+                    <button class="confirm-button" data-button-id="button1">Confirm</button>
                 </div>
             </div>
 
             <div class="button-container">
                 <button class="circle-button" id="button2" data-button-key="key2"></button>
-                <div class="current-value" id="currentValue2">현재 값: 0</div>
+                <div class="current-value" id="currentValue2">Current Key: 0</div>
                 <div class="controls">
                     <select class="value-dropdown" id="dropdown2">
                     </select>

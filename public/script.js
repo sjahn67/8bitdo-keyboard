@@ -2,18 +2,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmButtons = document.querySelectorAll('.confirm-button');
     const circleButtons = document.querySelectorAll('.circle-button');
     const dropdowns = document.querySelectorAll('.value-dropdown');
+    const dropdownsModi = document.querySelectorAll('.value-dropdownmodi');
+
     const currentValueDisplays = {
+        button0: document.getElementById('currentValue0'),
         button1: document.getElementById('currentValue1'),
         button2: document.getElementById('currentValue2')
     };
 
     let currentButtonValues = {
+        button0: 0,
         button1: 0,
         button2: 0
     };
 
     const populateDropdowns = (options) => {
         dropdowns.forEach(dropdown => {
+            dropdown.innerHTML = '';
+            options.forEach(optionValue => {
+                const optionElement = document.createElement('option');
+                optionElement.value = optionValue;
+                optionElement.textContent = optionValue;
+                dropdown.appendChild(optionElement);
+            });
+        });
+    };
+
+    const populateModiDropdowns = (options) => {
+        dropdownsModi.forEach(dropdown => {
             dropdown.innerHTML = '';
             options.forEach(optionValue => {
                 const optionElement = document.createElement('option');
@@ -31,8 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             currentButtonValues = data.buttonValues;
             updateDisplay(currentButtonValues);
+            console.log(data);
 
             populateDropdowns(data.dropdownOptions);
+            populateModiDropdowns(data.dropdownModiOptions);
 
         } catch (error) {
             console.error('초기 데이터를 가져오는 중 오류 발생:', error);
@@ -40,12 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateDisplay = (values) => {
+        if (values.button0 !== undefined) {
+            currentValueDisplays.button0.textContent = `Option Key: ${values.button0}`;
+            currentButtonValues.button0 = values.button0;
+        }
         if (values.button1 !== undefined) {
-            currentValueDisplays.button1.textContent = `현재 값: ${values.button1}`;
+            currentValueDisplays.button1.textContent = `Current Key: ${values.button1}`;
             currentButtonValues.button1 = values.button1;
         }
         if (values.button2 !== undefined) {
-            currentValueDisplays.button2.textContent = `현재 값: ${values.button2}`;
+            currentValueDisplays.button2.textContent = `Current Key: ${values.button2}`;
             currentButtonValues.button2 = values.button2;
         }
     };
@@ -71,6 +93,18 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error(`서버로 ${buttonId}의 ${eventType} 이벤트 전송 중 오류 발생:`, error);
         }
+    };
+
+    // --- eventKey0_down 함수 정의 (서버로 전송만 담당) ---
+    const eventKey0_down = (key, value) => {
+        console.log(`eventKey0_down 호출됨 (프론트엔드) - 키: ${key}, 현재 값: ${value}`);
+        sendButtonEventToServer('down', 'button0', key, value);
+    };
+
+    // --- eventKey0_up 함수 정의 (서버로 전송만 담당) ---
+    const eventKey0_up = (key, value) => {
+        console.log(`eventKey1_up 호출됨 (프론트엔드) - 키: ${key}, 현재 값: ${value}`);
+        sendButtonEventToServer('up', 'button0', key, value);
     };
 
     // --- eventKey1_down 함수 정의 (서버로 전송만 담당) ---
@@ -113,10 +147,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         button.addEventListener('mouseup', () => {
             const currentValue = currentButtonValues[buttonId];
-            if (eventKey === 'key1') {
-                eventKey1_up(eventKey, currentValue);
-            } else if (eventKey === 'key2') {
-                eventKey2_up(eventKey, currentValue);
+            switch (eventKey) {
+                case "key0":
+                    eventKey0_up(eventKey, currentValue);
+                    break;
+                case "key1":
+                    eventKey1_up(eventKey, currentValue);
+                    break;
+                case "key2":
+                    eventKey2_up(eventKey, currentValue);
+                    break;
             }
         });
     });

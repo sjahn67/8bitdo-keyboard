@@ -73,6 +73,13 @@ body {
     font-size: 1em;
 }
 
+.value-dropdownmodi {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
 .confirm-button {
     padding: 10px 15px;
     background-color: #28a745;

@@ -19,8 +19,6 @@
 
 // 'onoff' 라이브러리 임포트 (GPIO 제어용)
 const Gpio = require('onoff').Gpio;
-// 'node-hid' 라이브러리 임포트 (HID 장치 통신용)
-const HID = require('node-hid');
 
 const HID_KEY = require("./hid_key_code")
 
