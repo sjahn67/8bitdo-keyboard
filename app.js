@@ -8,7 +8,8 @@ const hid_mo_key_names = Object.keys(hid.MO_KEY);
 hid_mo_key_names.splice(0, 0, "None");
 const port = 3000;
 const database = require("./database");
-const main = require("./index");
+const send = require("./sendKey");
+const activeKeys = send.activeKeys;
 
 let m = module.exports = {};
 
@@ -97,13 +98,23 @@ app.post('/api/button-event', (req, res) => {
     if (eventType === 'down') {
         console.log(`[DOWN EVENT] Processing for ${buttonId}`);
         // 특정 down 이벤트 처리 로직
+        if (!activeKeys.has(buttonValues[buttonId])) {
+            activeKeys.add(buttonValues[buttonId]);
+        }
     } else if (eventType === 'up') {
         console.log(`[UP EVENT] Processing for ${buttonId}`);
-        // 특정 up 이벤트 처리 로직
+        // 특정 up 이벤트 처리 로직aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        if (activeKeys.has(buttonValues[buttonId])) {
+            activeKeys.delete(buttonValues[buttonId]);
+        }
     } else {
         console.warn(`Unknown event type: ${eventType}`);
         return res.status(400).json({ success: false, message: 'Unknown event type.' });
     }
+    // 현재 눌려있는 모든 키들을 기반으로 HID 보고서 생성 및 전송
+    console.log("bValues:",buttonValues, "activeKeys:", activeKeys);
+    send.sendKey(buttonValues.button0, activeKeys);
+    
 
     res.json({ success: true, message: `Button ${eventType} event received and processed.` });
 });

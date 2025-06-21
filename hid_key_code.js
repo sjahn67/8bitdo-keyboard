@@ -2,6 +2,7 @@
 let m = module.exports = {};
 // 일반 문자 키 (0x04 ~ 0x2C)
 m.GEN_KEY = Object.freeze({
+    None: 0x00,
     // Letters
     A: 0x04,
     B: 0x05,

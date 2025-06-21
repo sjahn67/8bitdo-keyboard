@@ -3,6 +3,8 @@ const HID_KEY = require("./hid_key_code")
 const KEYBOARD_DEVICE = "/dev/hidg0";
 let m = module.exports = {};
 
+m.activeKeys = this.activeKeys = new Set(); // 현재 눌려있는 키들을 추적하는 Set
+
 let fd = null;
 m.open = function () {
     fd = fs.openSync(KEYBOARD_DEVICE, 'w');

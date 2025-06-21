@@ -24,6 +24,7 @@ const Gpio = require('onoff').Gpio;
 const HID_KEY = require("./hid_key_code")
 const send = require("./sendKey");
 const app = require("./app");
+const activeKeys = send.activeKeys;
 // --- 설정 ---
 
 // GPIO 핀 정의
@@ -44,7 +45,6 @@ const keyMappings = {
 app.initData(GPIO_PIN_1, GPIO_PIN_2, keyMappings);
 
 // --- 전역 변수 ---
-const activeKeys = new Set(); // 현재 눌려있는 키들을 추적하는 Set
 let hidDevice = null;
 
 // --- HID 장치 및 GPIO 초기화 ---
