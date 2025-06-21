@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { IProgramConfig } from "./interface";
 
-const PROGRAM_CONFIG_FILE_PATH = join(__dirname, "program-config.json");
+const PROGRAM_CONFIG_FILE_PATH = join(process.cwd(), "program-config.json");
 const jsonFactory: IProgramConfig = {
     version: 1,
     name: "Big-keyboard config file",

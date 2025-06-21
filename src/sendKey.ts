@@ -2,6 +2,8 @@ import { openSync, closeSync, writeSync } from "node:fs";
 import { GEN_KEY } from "./hid_key_code";
 const KEYBOARD_DEVICE = "/dev/hidg0";
 
+export const activeKeys = new Set(); // 현재 눌려있는 키들을 추적하는 Set
+
 export class SendKey {
     protected fd: number = null;
 

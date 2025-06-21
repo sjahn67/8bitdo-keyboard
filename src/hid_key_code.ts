@@ -1,5 +1,5 @@
 // keyboard_hid_codes.js
-// general 키 (0x04 ~ 0x2C)
+// general key (0x04 ~ 0x2C)
 export const GEN_KEY = {
     // Letters
     A: 0x04,
@@ -116,7 +116,7 @@ export const GEN_KEY = {
 };
 
 export const MO_KEY = {
-    // Modifier Keys (0xE0 ~ 0xE7) - 이들은 단독으로 사용되지 않고 다른 키와 조합됩니다.
+    // Modifier Keys
     LEFT_CONTROL: 0x01,
     LEFT_SHIFT: 0x02,
     LEFT_ALT: 0x04,
@@ -126,13 +126,3 @@ export const MO_KEY = {
     RIGHT_ALT: 0x40,
     RIGHT_WINDOW: 0x80,
 }
-
-
-// 사용 예시
-/*
-const HID_KEY = require('./keyboard_hid_codes');
-
-console.log(`Key A: ${HID_KEY.A.toString(16)}`); // a
-console.log(`Key Enter: ${HID_KEY.ENTER.toString(16)}`); // 28
-console.log(`Left Shift: ${HID_KEY.LEFT_SHIFT.toString(16)}`); // e1
-*/

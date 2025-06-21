@@ -20,7 +20,7 @@ const NAME_BIG_2 = "big-keyboard-server";
 
 const NAME_TARGET_WIN32 = "node16-win-x64";
 const NAME_TARGET_DARWIN = "node16-macos-arm64";
-const NAME_TARGET_LINUX = "node16-linux-x64";
+const NAME_TARGET_LINUX = "node16-linux-arm64";
 
 let nameApplication, nameTarget, nameElectronBuilder;//, nameLauncher;
 switch (namePlatform) {
@@ -44,9 +44,11 @@ const AppDir = join(BaseDir, "big-keyboard");
 const BuildDir = join(AppDir, "build");
 const cBuildDir = join(gulpRoot, "build");
 const sourcePath = join(gulpRoot, "dist", "index.js");
+const systemPath = join(gulpRoot, "system");
 
 const copyServerData = [
-  // { source: gulpRoot + "/node_modules/idsys-lib/build/Release/idsys-lib.node", dest: BuildDir },
+  { source: gulpRoot + "/node_modules/epoll/build/Release/epoll.node", dest: BuildDir },
+  { source: systemPath + "/*.*", dest: AppDir }
 ];
 
 async function copyServerPackage() {
