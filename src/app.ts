@@ -8,11 +8,11 @@ const hid_mo_key_names = Object.keys(MO_KEY);
 hid_mo_key_names.splice(0, 0, "None");
 const port = 3000;
 import { getProgramConfig, saveProgramConfig } from "./database";
-import { Big } from "./globals";
+import { _8BitDo } from "./globals";
 import { send, activeKeys} from "./sendKey";
 
 // global variable...
-let buttonValues = Big.ProgramConfig.values;
+let buttonValues = _8BitDo.ProgramConfig.values;
 
 let GPIO_PIN_1 = null;
 let GPIO_PIN_2 = null;
@@ -77,7 +77,7 @@ app.post('/api/update-value', (req: any, res: any) => {
     if (buttonId in buttonValues) {
         buttonValues[buttonId] = newValue; // Convert to number
         console.log(`Updated ${buttonId} to: ${buttonValues[buttonId]}`);
-        saveProgramConfig(Big.ProgramConfig);
+        saveProgramConfig(_8BitDo.ProgramConfig);
         setNewKey();
         res.json({ success: true, newValues: buttonValues });
     } else {

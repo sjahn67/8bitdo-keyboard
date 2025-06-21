@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "big-keyboard",
+            "name": "8bitdo-keyboard",
             "skipFiles": [
                 "<node_internals>/**"
             ],

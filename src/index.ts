@@ -6,7 +6,7 @@
  * `sudo node ./dist/index.js`
  * (You may have root privilige to access HID device )
  */
-import { Big } from "./globals";
+import { _8BitDo } from "./globals";
 // Import 'onoff' library (for GPIO control)
 import { Gpio } from "onoff"
 import { isNumber } from "lodash";
@@ -17,14 +17,14 @@ import { initData } from "./app";
 // GPIO pin definition
 // Suitable for buttons that send a LOW signal when pressed and are normally PULL-UP to a HIGH state.
 // (e.g., a momentary button with a pull-up resistor)
-const gpio = Big.ProgramConfig.gpio;
+const gpio = _8BitDo.ProgramConfig.gpio;
 const addGpioValue = 512;
 const GPIO_PIN_1 = gpio.PIN_1 + addGpioValue; // Example: GPIO 17 (Pin 11)
 const GPIO_PIN_2 = gpio.PIN_2 + addGpioValue; // Example: GPIO 27 (Pin 13)
 
 
 // Map GPIO pins to key codes
-const bValues = Big.ProgramConfig.values;
+const bValues = _8BitDo.ProgramConfig.values;
 const keyMappings = {
     [GPIO_PIN_1]: bValues.button1,      // If GPIO 17 is pressed, 'A' key input
     [GPIO_PIN_2]: bValues.button2       // If GPIO 27 is pressed, 'Space' key input

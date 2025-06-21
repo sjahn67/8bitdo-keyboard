@@ -1,7 +1,7 @@
 {
-  "name": "Big-keyboard",
+  "name": "8bitdo-keyboard",
   "version": "1.0.0",
-  "description": "Big keyboard program for raspi",
+  "description": "8BitDo keyboard program pkg configuration for raspi",
   "author": "SeonJin Ahn",
   "pkg": {
     "scripts": [],

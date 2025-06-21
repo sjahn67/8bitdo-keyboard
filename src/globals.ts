@@ -1,6 +1,6 @@
 import { getProgramConfig } from "./database";
 import { IBigGlobal } from "./interface";
 
-export const Big: IBigGlobal = {
+export const _8BitDo: IBigGlobal = {
     ProgramConfig: getProgramConfig()
 }

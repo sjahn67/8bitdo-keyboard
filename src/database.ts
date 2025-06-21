@@ -5,7 +5,7 @@ import { IProgramConfig } from "./interface";
 const PROGRAM_CONFIG_FILE_PATH = join(process.cwd(), "program-config.json");
 const jsonFactory: IProgramConfig = {
     version: 1,
-    name: "Big-keyboard config file",
+    name: "8bitdo-keyboard config file",
     values: {
         button0: 0,
         button1: "A",
