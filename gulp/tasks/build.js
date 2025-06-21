@@ -13,28 +13,14 @@ const configFileName = "tsconfig.json";
 
 // define source destination directories
 const srcDir = join(gulpRoot, "src");
-const srcServerDir = join(srcDir, "server");
-const srcServerDbDir = join(srcServerDir, "database");
-const srcElectronDir = join(srcDir, "electron");
-const srcElectronIncludePath = join(srcElectronDir, "includes");
-const srcClientDir = join(srcElectronDir, "client");
-const serverConfigPath = join(srcDir, configFileName);
-// const srcNativeDir = join(srcServerDir, "native");
+const configPath = join(gulpRoot, configFileName);
 
 /// define dist direcotries
 const distDir = join(gulpRoot, "dist");
-const distServerDir = join(distDir, "server");
-const distServerDbDir = join(distServerDir, "database");
-const distElectronDir = join(distDir, "electron");
-const distElectronIncludePath = join(distElectronDir, "includes");
-const distClientDir = join(distElectronDir, "client");
 
 const cBuildDir = join(gulpRoot, "build");
 
 const copyServerData = [
-  { source: [`${srcServerDbDir}/*.*`, `!${srcServerDbDir}/*.ts`], dest: distServerDbDir },
-  { source: [`${srcElectronIncludePath}/*.json`], dest: distElectronIncludePath },
-  { source: [`${srcElectronDir}/atta.ico`, `${srcElectronDir}/atta-mac.png`], dest: distElectronDir }
 ];
 
 const copyClientData = [
@@ -47,7 +33,7 @@ function handleError(err) {
 }
 
 async function buildServer() {
-  const exeCmd = `npx tsc -p ${serverConfigPath}`;
+  const exeCmd = `npx tsc -p ${configPath}`;
   const ret = await doExeWithConsoleMsg(exeCmd, gulpRoot);
   if (ret != 0) {
     await Promise.reject(new Error("Typescript error!"));
@@ -153,7 +139,7 @@ async function clientWatch() {
 
 }
 
-gulp.task("build-server", gulp.series(buildServer, copyServerFiles));
+gulp.task("build", gulp.series(buildServer, copyServerFiles));
 gulp.task("build-client", gulp.series(testClient, buildClient, copyClientFiles));
 gulp.task("build-client-dev", gulp.series(testClient, buildClientDev));
 gulp.task("build-client:watch", clientWatch);

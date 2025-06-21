@@ -31,6 +31,8 @@
     "gulp-tslint": "=8.1.4",
     "gulp-typescript": "^5.0.1",
     "gulp-watch": "=5.0.1",
-    "typescript": "^5.3.3"
+    "pkg": "^5.8.1",
+    "typescript": "^5.3.3",
+    "npm-package-json-lint": "^8.0.0"
   }
 }

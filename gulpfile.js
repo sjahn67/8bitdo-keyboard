@@ -11,14 +11,13 @@ gulp.registry(hub);
 
 // define composite tasks
 // NOTE HEY, STOP REMOVING PIPELINE STEPS!
-gulp.task('default', gulp.series('clean', 'build-server', "build-client"));
+gulp.task('default', gulp.series('clean', 'build'));
 
 // NOTE When test appears back in here, KEEP IT HERE. Without tests we are BLIND to what we're doing!
 gulp.task('checkAndBuild', gulp.parallel('packageCheck', 'tslint', 'build'));
 gulp.task("dist", gulp.series(
   'clean',
-  'build-server',
-  'build-client',
+  'build',
   'buildPkg',
   'packaging'
 ));
