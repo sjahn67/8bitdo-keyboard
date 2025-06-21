@@ -19,13 +19,11 @@ m.sendKey = function (modiData, keyData) {
             console.log("Device is not opend!");
             return;
         }
-        console.log(keyData);
-        const mData = (modiData === "None")? 0 : HID_KEY.MO_KEY[modiData];
         const report = [ 0, 0, 0, 0, 0, 0, 0, 0];
 
         let count = 0;
         keyData.forEach((key) => {
-            report[0] = mData;
+            report[0] = modiData;
             report[count +2] = HID_KEY.GEN_KEY[key];
             if(++count > 5) return;
         } )

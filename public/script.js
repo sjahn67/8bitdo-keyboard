@@ -1,3 +1,15 @@
+const mo_key = Object.freeze({
+    // Modifier Keys (0xE0 ~ 0xE7) - 이들은 단독으로 사용되지 않고 다른 키와 조합됩니다.
+    LEFT_CONTROL: 0x01,
+    LEFT_SHIFT: 0x02,
+    LEFT_ALT: 0x04,
+    LEFT_WINDOWS: 0x08, // Windows Key, Command Key (Mac)
+    RIGHT_CONTROL: 0x10,
+    RIGHT_SHIFT: 0x20,
+    RIGHT_ALT: 0x40,
+    RIGHT_WINDOW: 0x80,
+})
+
 document.addEventListener('DOMContentLoaded', () => {
     const confirmButtons = document.querySelectorAll('.confirm-button');
     const circleButtons = document.querySelectorAll('.circle-button');
@@ -28,17 +40,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const populateModiDropdowns = (options) => {
-        dropdownsModi.forEach(dropdown => {
-            dropdown.innerHTML = '';
-            options.forEach(optionValue => {
-                const optionElement = document.createElement('option');
-                optionElement.value = optionValue;
-                optionElement.textContent = optionValue;
-                dropdown.appendChild(optionElement);
-            });
-        });
-    };
+    const updateCheckBoxes = (options) => {
+        Object.keys(mo_key).forEach(key => {
+            if (mo_key[key] & options) {
+                setCheckboxStateByValue(key, true);
+            } else {
+                setCheckboxStateByValue(key, false);
+            }
+        })
+    }
 
     const loadInitialData = async () => {
         try {
@@ -50,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(data);
 
             populateDropdowns(data.dropdownOptions);
-            populateModiDropdowns(data.dropdownModiOptions);
+            updateCheckBoxes(currentButtonValues.button0);
 
         } catch (error) {
             console.error('초기 데이터를 가져오는 중 오류 발생:', error);
@@ -165,9 +175,17 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmButtons.forEach(button => {
         button.addEventListener('click', async () => {
             const buttonId = button.dataset.buttonId;
-            const dropdownId = `dropdown${buttonId.replace('button', '')}`;
-            const selectedDropdown = document.getElementById(dropdownId);
-            const newValue = selectedDropdown.value;
+            let newValue = 0;
+            if(buttonId === "button0") {
+                const selectedList = getSelectedCheckboxValues();
+                selectedList.forEach(item => {
+                    newValue |= mo_key[item];
+                });
+            } else {
+                const dropdownId = `dropdown${buttonId.replace('button', '')}`;
+                const selectedDropdown = document.getElementById(dropdownId);
+                newValue = selectedDropdown.value;
+            }
 
             try {
                 const response = await fetch('/api/update-value', {
@@ -192,6 +210,44 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+/**
+ * Sets the checked state of a specific checkbox by its value.
+ * @param {string} value - The value of the checkbox to manipulate (e.g., 'valueA', 'valueB').
+ * @param {boolean} checked - True to check the checkbox, false to uncheck it.
+ */
+function setCheckboxStateByValue(value, checked) {
+    const checkboxes = document.querySelectorAll('#checkboxGroup0 input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        if (checkbox.value === value) {
+            checkbox.checked = checked;
+        }
+    });
+    console.log(`Checkbox with value '${value}' has been set to ${checked}`);
+}
+
+/**
+ * Sets the checked state for all checkboxes in the group.
+ * @param {boolean} checked - True to check all checkboxes, false to uncheck them.
+ */
+function setAllCheckboxesState(checked) {
+    const checkboxes = document.querySelectorAll('#checkboxGroup0 input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = checked;
+    });
+    console.log(`All checkboxes have been set to ${checked}`);
+}
+
+/**
+ * Returns an array of values for all currently selected checkboxes.
+ * @returns {Array<string>} An array containing the values of the selected checkboxes.
+ */
+function getSelectedCheckboxValues() {
+    const checkedCheckboxes = document.querySelectorAll('#checkboxGroup0 input[type="checkbox"]:checked');
+    const selectedValues = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
+    console.log('Currently selected values:', selectedValues);
+    return selectedValues;
+}    
 
     loadInitialData();
 });

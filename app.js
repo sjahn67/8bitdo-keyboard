@@ -65,10 +65,10 @@ app.post('/api/update-value', (req, res) => {
 
     // 받아온 값이 드롭다운 옵션에 유효한 값인지 검증 (선택 사항이지만 권장)
     if (buttonId === "button0") {
-        const validOptions = getModifierOptions();
-        if (!validOptions.includes(newValue)) {
-            return res.status(400).json({ success: false, message: 'Invalid value selected.' });
-        }
+        // const validOptions = getModifierOptions();
+        // if (!validOptions.includes(newValue)) {
+        //     return res.status(400).json({ success: false, message: 'Invalid value selected.' });
+        // }
     } else {
         const validOptions = getDropdownOptions();
         if (!validOptions.includes(newValue)) {

@@ -94,3 +94,12 @@ body {
 .confirm-button:hover {
     background-color: #218838;
 }
+
+.checkbox-group {
+    margin-top: 10px;
+}
+
+.checkbox-group label {
+    display: block;
+    margin-bottom: 5px;
+}
