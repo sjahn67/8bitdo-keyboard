@@ -1,27 +1,24 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const path = require('path');
+import express, { Request, Response, NextFunction, Router } from "express";
+import bodyParser from 'body-parser';
+import { join } from "node:path";
 const app = express();
-const hid = require("./hid_key_code");
-const hid_gen_key_names = Object.keys(hid.GEN_KEY);
-const hid_mo_key_names = Object.keys(hid.MO_KEY);
+import { GEN_KEY, MO_KEY } from "./hid_key_code";
+const hid_gen_key_names = Object.keys(GEN_KEY);
+const hid_mo_key_names = Object.keys(MO_KEY);
 hid_mo_key_names.splice(0, 0, "None");
 const port = 3000;
-const database = require("./database");
-const send = require("./sendKey");
-const activeKeys = send.activeKeys;
+import { getProgramConfig, saveProgramConfig } from "./database";
+import { Big } from "./globals";
+import { send, activeKeys} from "./sendKey";
 
-let m = module.exports = {};
+// global variable...
+let buttonValues = Big.ProgramConfig.values;
 
-// global valiable...
-global.ProgramConfig = database.getProgramConfig();
-let buttonValues = global.ProgramConfig.values;
-
-let GPIO_PIN_1=null;
+let GPIO_PIN_1 = null;
 let GPIO_PIN_2 = null;
 let KEY_MAPPINGS = null;
 
-m.initData = function initData(gpio_pin_1, gpio_pin_2, keyMappings) {
+export function initData(gpio_pin_1, gpio_pin_2, keyMappings) {
     GPIO_PIN_1 = gpio_pin_1;
     GPIO_PIN_2 = gpio_pin_2;
     KEY_MAPPINGS = keyMappings;
@@ -32,25 +29,25 @@ function setNewKey() {
     KEY_MAPPINGS[GPIO_PIN_2] = buttonValues.button2;
 }
 
-// 드롭다운에 사용할 값 목록을 함수로 정의
-// 이 함수는 문자열 배열을 반환합니다.
-function getDropdownOptions() {
+// Defines a function to list values for dropdowns
+// This function returns an array of strings.
+function getDropdownOptions(): string[] {
     return hid_gen_key_names;
 }
 
-function getModifierOptions() {
+function getModifierOptions(): string[] {
     return hid_mo_key_names;
 }
 
-// 미들웨어 설정
-app.use(bodyParser.json()); // JSON 형태의 요청 본문 파싱
-app.use(bodyParser.urlencoded({ extended: true })); // URL-encoded 형태의 요청 본문 파싱
+// Middleware setup
+app.use(bodyParser.json()); // Parse JSON-formatted request bodies
+app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded request bodies
 
-// 정적 파일 서빙 (HTML, CSS, 클라이언트 JavaScript 파일들이 있는 폴더)
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files (folder containing HTML, CSS, client-side JavaScript files)
+app.use(express.static(join(__dirname, "..", 'public')));
 
-// 초기 값 및 드롭다운 옵션 요청 API
-app.get('/api/initial-data', (req, res) => {
+// API for requesting initial values and dropdown options
+app.get('/api/initial-data', (req: Request, res: Response) => {
     res.json({
         buttonValues: buttonValues,
         dropdownOptions: getDropdownOptions(), // send dropdown
@@ -58,13 +55,13 @@ app.get('/api/initial-data', (req, res) => {
     });
 });
 
-// 값 업데이트 API
-app.post('/api/update-value', (req, res) => {
+// API for updating values
+app.post('/api/update-value', (req: any, res: any) => {
     console.log("/api/update-value");
     const { buttonId, newValue } = req.body;
     console.log("id:", buttonId, "new value:", newValue);
 
-    // 받아온 값이 드롭다운 옵션에 유효한 값인지 검증 (선택 사항이지만 권장)
+    // Validate if the received value is valid for dropdown options (optional but recommended)
     if (buttonId === "button0") {
         // const validOptions = getModifierOptions();
         // if (!validOptions.includes(newValue)) {
@@ -78,9 +75,9 @@ app.post('/api/update-value', (req, res) => {
     }
 
     if (buttonId in buttonValues) {
-        buttonValues[buttonId] = newValue; // 숫자로 변환
+        buttonValues[buttonId] = newValue; // Convert to number
         console.log(`Updated ${buttonId} to: ${buttonValues[buttonId]}`);
-        database.saveProgramConfig(ProgramConfig);
+        saveProgramConfig(Big.ProgramConfig);
         setNewKey();
         res.json({ success: true, newValues: buttonValues });
     } else {
@@ -88,38 +85,40 @@ app.post('/api/update-value', (req, res) => {
     }
 });
 
-// 단일 API: 버튼 이벤트 처리 (눌림/떨어짐)
-app.post('/api/button-event', (req, res) => {
+// Single API: Handle button events (press/release)
+app.post('/api/button-event', (req: any, res: any) => {
     const { eventType, buttonId, eventKey, currentValue } = req.body;
     console.log(`Received Button Event: Type: ${eventType}, Button ID: ${buttonId}, Event Key: ${eventKey}, Current Value: ${currentValue}`);
 
-    // 여기에 이벤트 타입에 따른 서버 측 로직을 구현합니다.
-    // 예시:
+    // Implement server-side logic based on event type here.
+    // Example:
     if (eventType === 'down') {
         console.log(`[DOWN EVENT] Processing for ${buttonId}`);
-        // 특정 down 이벤트 처리 로직
+        // Specific down event processing logic
+        if (!activeKeys.has(buttonValues[buttonId])) {
+            activeKeys.add(buttonValues[buttonId]);
+        }
         if (!activeKeys.has(buttonValues[buttonId])) {
             activeKeys.add(buttonValues[buttonId]);
         }
     } else if (eventType === 'up') {
         console.log(`[UP EVENT] Processing for ${buttonId}`);
-        // 특정 up 이벤트 처리 로직aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        // Specific up event processing logic
         if (activeKeys.has(buttonValues[buttonId])) {
             activeKeys.delete(buttonValues[buttonId]);
         }
+
     } else {
         console.warn(`Unknown event type: ${eventType}`);
         return res.status(400).json({ success: false, message: 'Unknown event type.' });
     }
-    // 현재 눌려있는 모든 키들을 기반으로 HID 보고서 생성 및 전송
     console.log("bValues:",buttonValues, "activeKeys:", activeKeys);
     send.sendKey(buttonValues.button0, activeKeys);
-    
 
     res.json({ success: true, message: `Button ${eventType} event received and processed.` });
 });
 
-// 서버 시작
+// Start server
 app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
 });

@@ -1,0 +1,11 @@
+{
+  "name": "Big-keyboard",
+  "version": "1.0.0",
+  "description": "Big keyboard program for raspi",
+  "author": "SeonJin Ahn",
+  "pkg": {
+    "scripts": [],
+    "assets": ["../public/**/*"],
+    "dirs": []
+  }
+}

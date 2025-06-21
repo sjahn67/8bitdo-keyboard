@@ -1,7 +1,6 @@
 // keyboard_hid_codes.js
-let m = module.exports = {};
-// 일반 문자 키 (0x04 ~ 0x2C)
-m.GEN_KEY = Object.freeze({
+// general key (0x04 ~ 0x2C)
+export const GEN_KEY = {
     None: 0x00,
     // Letters
     A: 0x04,
@@ -50,7 +49,7 @@ m.GEN_KEY = Object.freeze({
     TAB: 0x2B,
     SPACE: 0x2C,
     MINUS: 0x2D, // -_
-    EQUAL: 0x2E, // =+
+    EQUAL: 0x2E, // :+
     LEFT_BRACKET: 0x2F, // [{
     RIGHT_BRACKET: 0x30, // ]}
     BACKSLASH: 0x31, // \|
@@ -115,10 +114,10 @@ m.GEN_KEY = Object.freeze({
     POWER: 0x66, // Power
     KP_EQUAL: 0x67, // Keypad =
 
-});
+};
 
-m.MO_KEY = Object.freeze({
-    // Modifier Keys (0xE0 ~ 0xE7) - 이들은 단독으로 사용되지 않고 다른 키와 조합됩니다.
+export const MO_KEY = {
+    // Modifier Keys
     LEFT_CONTROL: 0x01,
     LEFT_SHIFT: 0x02,
     LEFT_ALT: 0x04,
@@ -127,14 +126,4 @@ m.MO_KEY = Object.freeze({
     RIGHT_SHIFT: 0x20,
     RIGHT_ALT: 0x40,
     RIGHT_WINDOW: 0x80,
-})
-
-
-// 사용 예시
-/*
-const HID_KEY = require('./keyboard_hid_codes');
-
-console.log(`Key A: ${HID_KEY.A.toString(16)}`); // a
-console.log(`Key Enter: ${HID_KEY.ENTER.toString(16)}`); // 28
-console.log(`Left Shift: ${HID_KEY.LEFT_SHIFT.toString(16)}`); // e1
-*/
+}
