@@ -1,47 +1,37 @@
 /**
  * @file index.js
  * @brief 라즈베리파이 GPIO 입력을 받아 PC에 키보드 이벤트를 전송하는 Node.js 프로그램입니다.
- *
- * 이 프로그램은 라즈베리파이가 USB HID 키보드로 설정되어 있을 때 동작합니다.
- * 'node-hid' 라이브러리를 사용하여 지정된 USB HID 키보드 장치에
- * HID 키보드 보고서를 작성함으로써 PC에 키 입력을 시뮬레이션합니다.
- *
- * 필수 전제 조건:
- * 1. 라즈베리파이 OS에서 USB HID 가젯 모드가 활성화되어 있어야 합니다.
- * (자세한 설정 방법은 이 문서의 상단 섹션을 참조하세요.)
- * 2. Node.js 및 'onoff', 'node-hid' 라이브러리가 라즈베리파이에 설치되어 있어야 합니다.
- * - 'node-hid' 설치 시 build-essential 및 Python 개발 도구가 필요할 수 있습니다.
- *
+ * *
  * 실행 방법:
  * `sudo node index.js`
  * (GPIO 및 HID 장치에 접근하려면 루트 권한이 필요할 수 있습니다.)
  */
-
-const _ = require("lodash");
+import { Big } from "./globals";
 // 'onoff' 라이브러리 임포트 (GPIO 제어용)
-const Gpio = require('onoff').Gpio;
-
-const HID_KEY = require("./hid_key_code")
-const send = require("./sendKey");
-const app = require("./app");
+import { Gpio } from "onoff"
+import { isNumber } from "lodash";
+import { send } from "./sendKey";
+import { initData } from "./app";
 // --- 설정 ---
 
 // GPIO 핀 정의
 // 버튼이 눌렸을 때 LOW 신호를 보내고, 평소에는 PULL-UP되어 HIGH 상태인 버튼에 적합합니다.
 // (예: 풀업 저항을 사용한 모멘터리 버튼)
-const GPIO_PIN_1 = 21 + 512; // 예시: GPIO 17 (Pin 11)
-const GPIO_PIN_2 = 20 + 512; // 예시: GPIO 27 (Pin 13)
+const gpio = Big.ProgramConfig.gpio;
+const addGpioValue = 512;
+const GPIO_PIN_1 = gpio.PIN_1 + addGpioValue; // 예시: GPIO 17 (Pin 11)
+const GPIO_PIN_2 = gpio.PIN_2 + addGpioValue; // 예시: GPIO 27 (Pin 13)
 
 
 // GPIO 핀과 키 코드 매핑
-const bValues = global.ProgramConfig.values;
+const bValues = Big.ProgramConfig.values;
 const keyMappings = {
     [GPIO_PIN_1]: bValues.button1,    // GPIO 17이 눌리면 'A' 키 입력
     [GPIO_PIN_2]: bValues.button2 // GPIO 27이 눌리면 'Space' 키 입력
 };
 
 // send keymapping data.
-app.initData(GPIO_PIN_1, GPIO_PIN_2, keyMappings);
+initData(GPIO_PIN_1, GPIO_PIN_2, keyMappings);
 
 // --- 전역 변수 ---
 const activeKeys = new Set(); // 현재 눌려있는 키들을 추적하는 Set
@@ -58,7 +48,7 @@ async function initialize() {
         hidDevice = send.open();
         console.log("Hid device:", hidDevice);
 
-        if (! _.isNumber(hidDevice)) {
+        if (!isNumber(hidDevice)) {
             console.error('오류: 라즈베리파이 USB HID 키보드 장치를 찾을 수 없습니다.');
             console.error('라즈베리파이가 USB HID 가젯 모드로 올바르게 설정되었는지 확인하세요.');
             process.exit(1);
@@ -101,7 +91,7 @@ async function initialize() {
                 }
 
                 // 현재 눌려있는 모든 키들을 기반으로 HID 보고서 생성 및 전송
-                console.log("bValues:",bValues, "activeKeys:", activeKeys);
+                console.log("bValues:", bValues, "activeKeys:", activeKeys);
                 send.sendKey(bValues.button0, activeKeys);
             });
         }
