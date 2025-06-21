@@ -118,14 +118,14 @@ m.GEN_KEY = Object.freeze({
 
 m.MO_KEY = Object.freeze({
     // Modifier Keys (0xE0 ~ 0xE7) - 이들은 단독으로 사용되지 않고 다른 키와 조합됩니다.
-    LEFT_CONTROL: 0xE0,
-    LEFT_SHIFT: 0xE1,
-    LEFT_ALT: 0xE2,
-    LEFT_GUI: 0xE3, // Windows Key, Command Key (Mac)
-    RIGHT_CONTROL: 0xE4,
-    RIGHT_SHIFT: 0xE5,
-    RIGHT_ALT: 0xE6,
-    RIGHT_GUI: 0xE7,
+    LEFT_CONTROL: 0x01,
+    LEFT_SHIFT: 0x02,
+    LEFT_ALT: 0x04,
+    LEFT_WINDOWS: 0x08, // Windows Key, Command Key (Mac)
+    RIGHT_CONTROL: 0x10,
+    RIGHT_SHIFT: 0x20,
+    RIGHT_ALT: 0x40,
+    RIGHT_WINDOW: 0x80,
 })
 
 

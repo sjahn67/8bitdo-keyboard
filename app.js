@@ -8,10 +8,28 @@ const hid_mo_key_names = Object.keys(hid.MO_KEY);
 hid_mo_key_names.splice(0, 0, "None");
 const port = 3000;
 const database = require("./database");
+const main = require("./index");
 
-// 임시 데이터 저장소 (실제 앱에서는 데이터베이스 사용)
+let m = module.exports = {};
+
+// global valiable...
 global.ProgramConfig = database.getProgramConfig();
-let buttonValues = ProgramConfig.values;
+let buttonValues = global.ProgramConfig.values;
+
+let GPIO_PIN_1=null;
+let GPIO_PIN_2 = null;
+let KEY_MAPPINGS = null;
+
+m.initData = function initData(gpio_pin_1, gpio_pin_2, keyMappings) {
+    GPIO_PIN_1 = gpio_pin_1;
+    GPIO_PIN_2 = gpio_pin_2;
+    KEY_MAPPINGS = keyMappings;
+}
+
+function setNewKey() {
+    KEY_MAPPINGS[GPIO_PIN_1] = buttonValues.button1;
+    KEY_MAPPINGS[GPIO_PIN_2] = buttonValues.button2;
+}
 
 // 드롭다운에 사용할 값 목록을 함수로 정의
 // 이 함수는 문자열 배열을 반환합니다.
@@ -62,6 +80,7 @@ app.post('/api/update-value', (req, res) => {
         buttonValues[buttonId] = newValue; // 숫자로 변환
         console.log(`Updated ${buttonId} to: ${buttonValues[buttonId]}`);
         database.saveProgramConfig(ProgramConfig);
+        setNewKey();
         res.json({ success: true, newValues: buttonValues });
     } else {
         res.status(400).json({ success: false, message: 'Invalid button ID' });
