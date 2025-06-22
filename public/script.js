@@ -1,5 +1,5 @@
 const mo_key = Object.freeze({
-    // Modifier Keys (0xE0 ~ 0xE7) - 이들은 단독으로 사용되지 않고 다른 키와 조합됩니다.
+    // Modifier Keys (0xE0 ~ 0xE7) - These are not used alone but in combination with other keys.
     LEFT_CONTROL: 0x01,
     LEFT_SHIFT: 0x02,
     LEFT_ALT: 0x04,
@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmButtons = document.querySelectorAll('.confirm-button');
     const circleButtons = document.querySelectorAll('.circle-button');
     const dropdowns = document.querySelectorAll('.value-dropdown');
-    const dropdownsModi = document.querySelectorAll('.value-dropdownmodi');
 
     const currentValueDisplays = {
         button0: document.getElementById('currentValue0'),
@@ -28,13 +27,27 @@ document.addEventListener('DOMContentLoaded', () => {
         button2: 0
     };
 
-    const populateDropdowns = (options) => {
+    const populateDropdowns = (options, initialValue) => {
         dropdowns.forEach(dropdown => {
             dropdown.innerHTML = '';
+            // console.log("dropdown:", dropdown.id);
+            let curValue = "None";
+            switch(dropdown.id) {
+                case "dropdown1":
+                    curValue = initialValue.button1;
+                    break;
+                case "dropdown2":
+                    curValue = initialValue.button2;
+                    break;
+            }
             options.forEach(optionValue => {
                 const optionElement = document.createElement('option');
                 optionElement.value = optionValue;
                 optionElement.textContent = optionValue;
+                // console.log("optionValue:", optionValue);
+                if (optionValue === curValue) {
+                optionElement.selected = true;
+            }                
                 dropdown.appendChild(optionElement);
             });
         });
@@ -57,19 +70,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             currentButtonValues = data.buttonValues;
             updateDisplay(currentButtonValues);
-            console.log(data);
+            // console.log(data);
 
-            populateDropdowns(data.dropdownOptions);
+            populateDropdowns(data.dropdownOptions, currentButtonValues);
             updateCheckBoxes(currentButtonValues.button0);
 
         } catch (error) {
-            console.error('초기 데이터를 가져오는 중 오류 발생:', error);
+            console.error('Error fetching initial data:', error);
         }
     };
 
     const updateDisplay = (values) => {
         if (values.button0 !== undefined) {
-            currentValueDisplays.button0.textContent = `Option Key: ${values.button0}`;
+            currentValueDisplays.button0.textContent = `Option Key: 0x${values.button0.toString(16).padStart(2, '0')}`;
             currentButtonValues.button0 = values.button0;
         }
         if (values.button1 !== undefined) {
@@ -82,66 +95,66 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 서버로 이벤트 데이터 전송 함수 (단일 API 엔드포인트 사용)
+    // Function to send event data to the server (using a single API endpoint)
     const sendButtonEventToServer = async (eventType, buttonId, eventKey, currentValue) => {
-        const url = `/api/button-event`; // 단일 API 엔드포인트
+        const url = `/api/button-event`; // Single API endpoint
         try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                // eventType을 데이터에 포함하여 서버로 전송
+                // Include eventType in the data sent to the server
                 body: JSON.stringify({ eventType, buttonId, eventKey, currentValue })
             });
             const data = await response.json();
             if (data.success) {
-                console.log(`서버로 ${buttonId}의 ${eventType} 이벤트 전송 성공:`, data.message);
+                console.log(`Successfully sent ${eventType} event for ${buttonId} to server:`, data.message);
             } else {
-                console.error(`서버로 ${buttonId}의 ${eventType} 이벤트 전송 실패:`, data.message);
+                console.error(`Failed to send ${eventType} event for ${buttonId} to server:`, data.message);
             }
         } catch (error) {
-            console.error(`서버로 ${buttonId}의 ${eventType} 이벤트 전송 중 오류 발생:`, error);
+            console.error(`Error sending ${eventType} event for ${buttonId} to server:`, error);
         }
     };
 
-    // --- eventKey0_down 함수 정의 (서버로 전송만 담당) ---
+    // --- eventKey0_down function definition (only responsible for sending to server) ---
     const eventKey0_down = (key, value) => {
-        console.log(`eventKey0_down 호출됨 (프론트엔드) - 키: ${key}, 현재 값: ${value}`);
+        console.log(`eventKey0_down called (frontend) - Key: ${key}, Current Value: ${value}`);
         sendButtonEventToServer('down', 'button0', key, value);
     };
 
-    // --- eventKey0_up 함수 정의 (서버로 전송만 담당) ---
+    // --- eventKey0_up function definition (only responsible for sending to server) ---
     const eventKey0_up = (key, value) => {
-        console.log(`eventKey1_up 호출됨 (프론트엔드) - 키: ${key}, 현재 값: ${value}`);
+        console.log(`eventKey1_up called (frontend) - Key: ${key}, Current Value: ${value}`);
         sendButtonEventToServer('up', 'button0', key, value);
     };
 
-    // --- eventKey1_down 함수 정의 (서버로 전송만 담당) ---
+    // --- eventKey1_down function definition (only responsible for sending to server) ---
     const eventKey1_down = (key, value) => {
-        console.log(`eventKey1_down 호출됨 (프론트엔드) - 키: ${key}, 현재 값: ${value}`);
+        console.log(`eventKey1_down called (frontend) - Key: ${key}, Current Value: ${value}`);
         sendButtonEventToServer('down', 'button1', key, value);
     };
 
-    // --- eventKey1_up 함수 정의 (서버로 전송만 담당) ---
+    // --- eventKey1_up function definition (only responsible for sending to server) ---
     const eventKey1_up = (key, value) => {
-        console.log(`eventKey1_up 호출됨 (프론트엔드) - 키: ${key}, 현재 값: ${value}`);
+        console.log(`eventKey1_up called (frontend) - Key: ${key}, Current Value: ${value}`);
         sendButtonEventToServer('up', 'button1', key, value);
     };
 
-    // --- eventKey2_down 함수 정의 (서버로 전송만 담당) ---
+    // --- eventKey2_down function definition (only responsible for sending to server) ---
     const eventKey2_down = (key, value) => {
-        console.log(`eventKey2_down 호출됨 (프론트엔드) - 키: ${key}, 현재 값: ${value}`);
+        console.log(`eventKey2_down called (frontend) - Key: ${key}, Current Value: ${value}`);
         sendButtonEventToServer('down', 'button2', key, value);
     };
 
-    // --- eventKey2_up 함수 정의 (서버로 전송만 담당) ---
+    // --- eventKey2_up function definition (only responsible for sending to server) ---
     const eventKey2_up = (key, value) => {
-        console.log(`eventKey2_up 호출됨 (프론트엔드) - 키: ${key}, 현재 값: ${value}`);
+        console.log(`eventKey2_up called (frontend) - Key: ${key}, Current Value: ${value}`);
         sendButtonEventToServer('up', 'button2', key, value);
     };
 
-    // 원형 버튼 mousedown 및 mouseup 이벤트 리스너 추가
+    // Add mousedown and mouseup event listeners for circle buttons
     circleButtons.forEach(button => {
         const buttonId = button.id;
         const eventKey = button.dataset.buttonKey;
@@ -171,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 확인 버튼 클릭 이벤트 리스너 (기존과 동일)
+    // Confirm button click event listener (same as before)
     confirmButtons.forEach(button => {
         button.addEventListener('click', async () => {
             const buttonId = button.dataset.buttonId;
@@ -198,15 +211,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (data.success) {
-                    console.log('값 저장 성공:', data.newValues);
+                    console.log('Value saved successfully:', data.newValues);
                     updateDisplay(data.newValues);
-                    alert(`${buttonId}의 값이 ${newValue}로 저장되었습니다.`);
+                    alert(`The value for ${buttonId} has been saved as ${newValue}.`);
                 } else {
-                    alert('값 저장 실패: ' + data.message);
+                    alert('Failed to save value: ' + data.message);
                 }
             } catch (error) {
-                console.error('값 저장 중 오류 발생:', error);
-                alert('서버와 통신 중 오류가 발생했습니다.');
+                console.error('Error saving value:', error);
+                alert('An error occurred while communicating with the server.');
             }
         });
     });
@@ -247,7 +260,7 @@ function getSelectedCheckboxValues() {
     const selectedValues = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
     console.log('Currently selected values:', selectedValues);
     return selectedValues;
-}    
+}     
 
     loadInitialData();
 });
