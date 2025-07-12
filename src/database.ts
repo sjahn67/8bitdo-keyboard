@@ -12,8 +12,8 @@ const jsonFactory: IProgramConfig = {
         button2: "B"
     },
     gpio: {
-        PIN_1: 20,
-        PIN_2: 21
+        PIN_1: 27,
+        PIN_2: 22
     }
 }
 

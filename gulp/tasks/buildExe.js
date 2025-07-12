@@ -41,13 +41,13 @@ const distElectronDir = join(distPath, "electron");
 const distServerDir = join(distPath, "server");
 
 const AppDir = join(BaseDir, "8BitDo-keyboard");
-const BuildDir = join(AppDir, "build");
+// const BuildDir = join(AppDir, "build");
 const cBuildDir = join(gulpRoot, "build");
 const sourcePath = join(gulpRoot, "dist", "index.js");
 const systemPath = join(gulpRoot, "system");
 
 const copyServerData = [
-  { source: gulpRoot + "/node_modules/epoll/build/Release/epoll.node", dest: BuildDir },
+  { source: gulpRoot + "/node_modules/epoll/build/Release/epoll.node", dest: AppDir },
   { source: systemPath + "/*.*", dest: AppDir }
 ];
 
@@ -73,7 +73,7 @@ async function cleanExecutableDirectory() {
 
   // Del in one go, much quicker.
   const appFiles = join(AppDir, nameApplication);
-  const buildFiles = join(BuildDir, "*.node");
+  const buildFiles = join(AppDir, "*.node");
   if (fs.existsSync(appFiles)) {
     console.log(`Clean ${appFiles} contents!`);
     let ret = await del(appFiles);
